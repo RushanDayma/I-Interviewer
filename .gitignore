@@ -1,0 +1,31 @@
+cat << EOF > .gitignore
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Local env files (Contains your database URLs, API Keys, etc.)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Project uploads/media (keeps your local testing uploads off GitHub)
+uploads/
+
+# IDE/Editor specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+EOF
