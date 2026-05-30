@@ -51,6 +51,15 @@ The platform follows a decoupled, event-driven architecture to ensure responsive
 
 ---
 
+## 📺 Project Demo
+<div align="center">
+  <a href="https://youtu.be/luDyiCk5Gcc">
+    <img src="https://img.shields.io/badge/Watch_Demo_Video-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="Watch Demo">
+  </a>
+</div>
+
+---
+
 ## 📦 Getting Started
 
 ### Prerequisites
