@@ -1,17 +1,20 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+
+// Load environment variables from the local .env in this folder
+dotenv.config();
+
 import http from 'http';
 
 import { Server } from 'socket.io';
 import connectDB from './config/db.js';
-// import userRoutes from './routes/userRoutes.js';
-// import sessionRoutes from './routes/sessionRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import sessionRoutes from './routes/sessionRoutes.js';
 
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 
-dotenv.config();
-// connectDB();
+connectDB();
 
 const app = express();
 
@@ -33,20 +36,17 @@ const io = new Server(server, {
 
 //for mobile apps or curl requests that don't have an origin, we allow them by default. For web requests, we check if the origin is in our allow list. In production, we allow all origins to avoid issues with different deployment environments. In development, we restrict to the specified origins for better security.
 app.use(cors({
-  origin:(origin, callback) => {
+  origin: (origin, callback) => {
     if (!origin) return callback(null, true); // Allow requests with no origin (like mobile apps or curl)
     if (allowOrigin.includes(origin)) {
-       callback(null, true);
+      callback(null, true);
     } else {
       if (process.env.NODE_ENV === 'production') {
         return callback(null, true); // Allow all origins in production
       }
-      else{
-        callback(new Error('Not allowed by CORS'));
-      }
+      callback(new Error('Not allowed by CORS'));
     }
   },
-  origin: allowOrigin,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization','X-Requested-With'],
@@ -55,24 +55,23 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.set('io', io); // Make the io instance available in routes via req.app.get('io')
+app.set('io', io); // Make the io instance available in routes via req.app.get('io') setter getter method
 
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
-// app.use('/api/users', userRoutes);
-// app.use('/api/sessions', sessionRoutes);
+//https://localhost:5000/api/users/register
+app.use('/api/users', userRoutes);
+app.use('/api/sessions', sessionRoutes);
 
 io.on('connection', (socket) => { //this creates a private room for each user based on their user ID, allowing us to send messages directly to that user without affecting others. This is useful for notifications, private messages, or any user-specific updates.
   console.log('A user connected: ' + socket.id);
   const UserId = socket.handshake.query.userId; // Get the user ID from the query parameters when the client connects 
-  if (UserId){
+  if (UserId) {
     socket.join(UserId); // Join a room with the user's ID
     console.log(`User ID ${UserId} connected with socket ID ${socket.id}`);
   }
-  
-  socket.join(UserId); // Join a room with the user's ID and (Global)used for broadcasting.
 
   socket.on('disconnect', () => {
     console.log('A user disconnected: ' + socket.id);

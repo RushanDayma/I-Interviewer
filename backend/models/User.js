@@ -42,13 +42,14 @@ userSchema.pre('save', async function (next) {
   }
   const salt = await bcrypt.genSalt(10); // Generate a salt with 10 rounds, It is added to the password before hashing to make it more secure and resistant to rainbow table attacks. The higher the number of rounds, the more secure but also more computationally expensive the hashing process will be.
   this.password = await bcrypt.hash(this.password, salt);
+  
 });
 
 // Method to compare entered password with the hashed password in the database
 userSchema.methods.matchPassword = async function (enteredPassword) {
   if (!this.password) {
     return false; // If there is no password (e.g., for Google users), return false
-  }f
+  }
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

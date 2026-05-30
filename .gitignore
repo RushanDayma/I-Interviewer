@@ -29,3 +29,15 @@ uploads/
 *.sln
 *.sw?
 EOF
+
+# Python
+ai-service/venv/
+__pycache__/
+*.pyc
+
+# Node
+node_modules/
+.env
+
+# Temp
+temp_audio/
