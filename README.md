@@ -98,9 +98,6 @@ cd I-Interviewer
     npm run dev
    ```
 
-### 
-<img width="2816" height="1536" alt="I-Interviewer Architecture" src="https://github.com/user-attachments/assets/36cc5666-9ee9-4b4e-a790-9ff6c2f44d66" />
-<img width="2816" height="1536" alt="I-Interviewer Architecture" src="https://github.com/user-attachments/assets/39d0d664-8147-46bf-9b79-95a945fa6986" />
-Developed By:
+### Developed By:
 
 Rushan Asad Dayma
