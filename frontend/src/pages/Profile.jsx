@@ -4,160 +4,108 @@ import { toast } from 'react-toastify'
 import { updateProfile, reset } from '../features/auth/authSlice'
 
 const ROLES = [
-  "Software Developer",
-  "MEAN Stack Developer",
-  "Full Stack Python",
-  "Full Stack Java",
-  "Frontend Developer",
-  "Backend Developer",
-  "Data Scientist",
-  "Data Analyst",
-  "Machine Learning Engineer",
-  "DevOps Engineer",
-  "Cloud Engineer (AWS/Azure/GCP)",
-  "Cybersecurity Engineer",
-  "Blockchain Developer",
-  "Mobile Developer (iOS/Android)",
-  "Game Developer",
-  "UI/UX Designer",
-  "QA Automation Engineer",
-  "Product Manager"
+  "Software Developer", "MEAN Stack Developer", "Full Stack Python", "Full Stack Java",
+  "Frontend Developer", "Backend Developer", "Data Scientist", "Data Analyst",
+  "Machine Learning Engineer", "DevOps Engineer", "Cloud Engineer (AWS/Azure/GCP)",
+  "Cybersecurity Engineer", "Blockchain Developer", "Mobile Developer (iOS/Android)",
+  "Game Developer", "UI/UX Designer", "QA Automation Engineer", "Product Manager"
 ];
 
-// Swapped the focus border to indigo-500 to match the new theme
-const inputBase = 'w-full bg-slate-50 border-2 border-transparent rounded-xl sm:rounded-2xl p-3.5 sm:px-4 font-semibold text-slate-700 text-base transition-all focus:bg-white focus:border-indigo-500 outline-none';
+const inputClass = 'w-full bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-900 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all';
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, isSuccess, isError, message, isProfileLoading } = useSelector((state) => state.auth);
-
-  const [formData, setFormData] = useState({
-    name: user?.name || '',
-    email: user?.email || '',
-    preferredRole: user?.preferredRole || '',
-  })
+  const [formData, setFormData] = useState({ name: user?.name || '', email: user?.email || '', preferredRole: user?.preferredRole || '' });
 
   useEffect(() => {
-    if (!isError && !isSuccess) return
-    if (isError) toast.error(message)
-    if (isSuccess) toast.success('Profile Updated Successfully')
-    dispatch(reset())
-  }, [isError, isSuccess, message, dispatch])
+    if (!isError && !isSuccess) return;
+    if (isError) toast.error(message);
+    if (isSuccess) toast.success('Profile updated');
+    dispatch(reset());
+  }, [isError, isSuccess, message, dispatch]);
 
   useEffect(() => {
-    if (user) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setFormData({
-        name: user?.name || '',
-        email: user?.email || '',
-        preferredRole: user?.preferredRole || '',
-      });
-    }
-  }, [user])
+    if (user) setFormData({ name: user?.name || '', email: user?.email || '', preferredRole: user?.preferredRole || '' });
+  }, [user]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const handleChange = (e) => setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (formData.name === user.name && formData.preferredRole === user.preferredRole) {
-      toast.info('No changes to save.')
-      return
+      toast.info('No changes to save.');
+      return;
     }
-    dispatch(updateProfile(formData))
+    dispatch(updateProfile(formData));
   }
 
   return (
-    <div className='max-w-4xl mx-auto px-4 py-6 sm:py-12 pb-24'>
-      <div className='bg-white rounded-3xl shadow-xl sm:shadow-2xl shadow-indigo-900/5 p-6 sm:p-12 border border-slate-100'>
-        <header className='mb-8'>
-          <h1 className='text-2xl sm:text-3xl font-black text-slate-900'>Edit Profile</h1>
-          <p className='text-sm text-slate-500 mt-1'>
-            Update your professional details and preferences
-          </p>
-        </header>
+    <div className='max-w-xl mx-auto px-4 py-8 sm:py-12'>
+      <div className='bg-white border border-zinc-200 rounded-xl p-6 sm:p-8'>
+        <div className='mb-6 pb-5 border-b border-zinc-100'>
+          <h1 className='text-lg font-semibold text-zinc-900'>Profile</h1>
+          <p className='text-sm text-zinc-500 mt-0.5'>Update your name and target role.</p>
+        </div>
 
-        <form onSubmit={handleSubmit} className='space-y-6' >
-
-          <FormField label="Full Name">
+        <form onSubmit={handleSubmit} className='space-y-5'>
+          <Field label="Full name">
             <input
-              type="text"
-              className={inputBase}
-              name="name"
-              value={formData.name}
+              type="text" name="name" value={formData.name}
+              className={inputClass}
+              placeholder='Your name'
               onChange={handleChange}
-              placeholder='Enter your name'
             />
-          </FormField>
+          </Field>
 
-          <FormField label="Email Address (Fixed)" muted>
+          <Field label="Email" muted>
             <input
               type="email"
-              className='w-full bg-slate-100 rounded-xl sm:rounded-2xl p-3.5 sm:px-4 font-semibold text-slate-500 text-base cursor-not-allowed'
-              disabled
-              value={formData.email}
-              onChange={handleChange}
+              className='w-full bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-400 cursor-not-allowed'
+              disabled value={formData.email}
             />
-          </FormField>
+          </Field>
 
-           <FormField label="Target Role">
+          <Field label="Target role">
             <div className='relative'>
-              <select name="preferredRole" value={formData.preferredRole} onChange={handleChange} className={`${inputBase} appearance-none`}>
-                {
-                  ROLES.map((role) => (
-                    <option key={role} value={role}>{role}</option>
-                  ))
-                }
+              <select name="preferredRole" value={formData.preferredRole} onChange={handleChange} className={`${inputClass} appearance-none`}>
+                {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
-              <SelectArrow />
+              <div className='absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400'>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
-          </FormField>
+          </Field>
 
-          <div className='pt-4'>
+          <div className='pt-2'>
             <button
               type='submit'
               disabled={isProfileLoading}
-              className={`w-full flex items-center justify-center gap-2 py-4 font-black rounded-xl sm:rounded-2xl transition-all active:scale-[0.98] ${isProfileLoading ? 'bg-slate-200 text-slate-400 cursor-wait shadow-none' : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-700 hover:to-violet-700 shadow-lg shadow-indigo-200'}`}>
-              {
-                isProfileLoading ? <Loader /> : 'Save Changes'
+              className={`w-full py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                isProfileLoading ? 'bg-zinc-200 text-zinc-400 cursor-wait' : 'bg-zinc-900 text-white hover:bg-zinc-700'
+              }`}
+            >
+              {isProfileLoading
+                ? <><span className='w-4 h-4 border-2 border-zinc-400 border-t-transparent animate-spin rounded-full' /> Saving...</>
+                : 'Save changes'
               }
-              </button>
+            </button>
           </div>
         </form>
       </div>
-
     </div>
   )
 }
 
-export default Profile
-
-function FormField({ label, children, muted }) {
+function Field({ label, children, muted }) {
   return (
-    <div className={`space-y-1.5 ${muted ? 'opacity-60' : ''}`}>
-      <label className='ml-1 text-[10px] sm:text-xs font-black text-slate-400 uppercase tracking-widest'>{label}</label>
+    <div className={`space-y-1.5 ${muted ? 'opacity-50' : ''}`}>
+      <label className='text-xs font-medium text-zinc-400 uppercase tracking-wider'>{label}</label>
       {children}
     </div>
   )
 }
 
-function SelectArrow() {
-  return (
-    <div className='absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400'>
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
-      </svg>
-    </div>
-  )
-}
-
-function Loader() {
-  return (
-    <>
-      <span className='w-5 h-5 border-2 border-slate-400 border-t-transparent animate-spin rounded-full' />
-      <span>Saving...</span>
-    </>
-  )
-}
+export default Profile

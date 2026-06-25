@@ -6,28 +6,17 @@ import { toast } from 'react-toastify'
 import SessionCard from "../components/SessionCard"
 
 const ROLES = [
-  "Software Developer",
-  "MEAN Stack Developer",
-  "Full Stack Python",
-  "Full Stack Java",
-  "Frontend Developer",
-  "Backend Developer",
-  "Data Scientist",
-  "Data Analyst",
-  "Machine Learning Engineer",
-  "DevOps Engineer",
-  "Cloud Engineer (AWS/Azure/GCP)",
-  "Cybersecurity Engineer",
-  "Blockchain Developer",
-  "Mobile Developer (iOS/Android)",
-  "Game Developer",
-  "UI/UX Designer",
-  "QA Automation Engineer",
-  "Product Manager"
+  "Software Developer", "MEAN Stack Developer", "Full Stack Python", "Full Stack Java",
+  "Frontend Developer", "Backend Developer", "Data Scientist", "Data Analyst",
+  "Machine Learning Engineer", "DevOps Engineer", "Cloud Engineer (AWS/Azure/GCP)",
+  "Cybersecurity Engineer", "Blockchain Developer", "Mobile Developer (iOS/Android)",
+  "Game Developer", "UI/UX Designer", "QA Automation Engineer", "Product Manager"
 ];
 const LEVELS = ["Junior", "Mid-Level", "Senior"];
 const TYPES = [{ label: 'Oral only', value: 'oral-only' }, { label: 'Coding + Oral', value: 'coding+oral' }];
 const COUNTS = [5, 10, 15];
+
+const selectClass = "w-full bg-white border border-zinc-200 rounded-lg px-3 py-2.5 text-sm text-zinc-800 font-medium focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all appearance-none";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -43,135 +32,138 @@ const Dashboard = () => {
     count: COUNTS[0],
   });
 
-  useEffect(() => {
-    dispatch(getSessions());
-  }, [dispatch]);
+  useEffect(() => { dispatch(getSessions()); }, [dispatch]);
 
   useEffect(() => {
-    if (isError && message) {
-      toast.error(message);
-      dispatch(reset());
-    }
+    if (isError && message) { toast.error(message); dispatch(reset()); }
   }, [isError, message, dispatch]);
 
-  const onChange = (e) => {
-    setFormData((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
-  }
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createSession(formData));
-  }
+  const onChange = (e) => setFormData((p) => ({ ...p, [e.target.name]: e.target.value }));
+  const onSubmit = (e) => { e.preventDefault(); dispatch(createSession(formData)); }
 
   const viewSession = (session) => {
-    if (session.status === 'completed') {
-      navigate(`/review/${session._id}`);
-    } else if(session.status === 'in-progress') {
-      navigate(`/interview/${session._id}`);
-    } else {
-      toast.info('Session not ready yet')
-    }
+    if (session.status === 'completed') navigate(`/review/${session._id}`);
+    else if (session.status === 'in-progress') navigate(`/interview/${session._id}`);
+    else toast.info('Session not ready yet');
   }
 
   const handleDelete = (e, sessionId) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this session?')) {
+    if (window.confirm('Delete this session?')) {
       dispatch(deleteSession(sessionId));
-      toast.error('Session Deleted')
+      toast.error('Session deleted');
     }
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-12 space-y-8 sm:space-y-12 animate-in duration-700">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 space-y-8">
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/50 pb-6 sm:pb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-6 border-b border-zinc-200">
         <div>
-          {/* CHANGED: text-slate-900 to text-white */}
-          <h1 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
-            Welcome, <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-violet-400">{user.name.split(' ')[0]}</span> 
+          <h1 className="text-xl font-semibold text-zinc-900">
+            Hey, {user.name.split(' ')[0]}
           </h1>
-          {/* CHANGED: text-slate-500 to text-slate-300 */}
-          <p className="text-slate-300 mt-1 text-sm sm:text-lg font-medium">Ready for your technical prep?</p>
+          <p className="text-sm text-zinc-500 mt-0.5">What are we working on today?</p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl sm:rounded-2xl border border-indigo-100 flex sm:block items-center gap-2 shadow-sm">
-            <p className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Total Sessions</p>
-            <p className="text-xl sm:text-2xl font-black text-indigo-700 leading-none">{sessions.length}</p>
-          </div>
+        <div className="bg-white border border-zinc-200 rounded-lg px-4 py-2.5 text-center min-w-[100px]">
+          <p className="text-xs text-zinc-400 uppercase tracking-wider font-medium">Sessions</p>
+          <p className="text-2xl font-semibold text-zinc-900 leading-none mt-0.5">{sessions.length}</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-xl sm:shadow-2xl shadow-indigo-900/10 border border-slate-100 overflow-hidden">
-        <div className="bg-slate-50/80 px-6 py-4 sm:px-8 sm:py-5 border-b border-slate-100 flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-slate-800 flex items-center tracking-tight">
-            <span className="bg-gradient-to-b from-indigo-500 to-violet-600 w-1.5 h-5 rounded-full mr-3 shadow-sm"></span>
-            New Interview Configuration
-          </h2>
-          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-md border border-indigo-100/50">
-            AI System Online
+      <div className="bg-white border border-zinc-200 rounded-xl overflow-hidden">
+        <div className="px-5 py-4 border-b border-zinc-100 flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-zinc-800">Set up your interview</h2>
+          <span className="flex items-center gap-1.5 text-xs text-teal-600 font-medium">
+            <span className="w-1.5 h-1.5 bg-teal-500 rounded-full"></span>
+            Ready
           </span>
         </div>
-        <form onSubmit={onSubmit} className="p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 items-end">
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Role</label>
-            <select name="role" value={formData.role} onChange={onChange} className="w-full bg-slate-50 border-none rounded-xl sm:rounded-2xl p-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">
-              {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
-            </select>
-          </div>
-          <div className="grid grid-cols-2 gap-4 lg:contents">
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Level</label>
-              <select name="level" value={formData.level} onChange={onChange} className="w-full bg-slate-50 border-none rounded-xl sm:rounded-2xl p-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">
-                {LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
+        <form onSubmit={onSubmit} className="p-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+          <div className="space-y-1.5 lg:col-span-1">
+            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Role</label>
+            <div className="relative">
+              <select name="role" value={formData.role} onChange={onChange} className={selectClass}>
+                {ROLES.map((r) => <option key={r} value={r}>{r}</option>)}
               </select>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Length</label>
-              <select name="count" value={formData.count} onChange={onChange} className="w-full bg-slate-50 border-none rounded-xl sm:rounded-2xl p-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">
-                {COUNTS.map((count) => <option key={count} value={count}>{count} Qs</option>)}
-              </select>
+              <ChevronDown />
             </div>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Type</label>
-            <select name="interviewType" value={formData.interviewType} onChange={onChange} className="w-full bg-slate-50 border-none rounded-xl sm:rounded-2xl p-3 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none">
-              {TYPES.map((type) => <option key={type.value} value={type.value}>{type.label}</option>)}
-            </select>
+          <div className="grid grid-cols-2 gap-3 lg:contents">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Level</label>
+              <div className="relative">
+                <select name="level" value={formData.level} onChange={onChange} className={selectClass}>
+                  {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+                </select>
+                <ChevronDown />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Length</label>
+              <div className="relative">
+                <select name="count" value={formData.count} onChange={onChange} className={selectClass}>
+                  {COUNTS.map((c) => <option key={c} value={c}>{c} questions</option>)}
+                </select>
+                <ChevronDown />
+              </div>
+            </div>
           </div>
-          <button type="submit" disabled={isProcessing} className={`w-full h-[48px] rounded-xl font-bold text-white flex items-center justify-center gap-2 transition-all active:scale-95 shadow-md ${isProcessing ? 'bg-slate-300 shadow-none' : 'bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 shadow-indigo-200'}`}>
-            {isProcessing ? <><span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span> Generating...</> : <span className="text-sm">Start Interview</span>}
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium text-zinc-400 uppercase tracking-wider">Format</label>
+            <div className="relative">
+              <select name="interviewType" value={formData.interviewType} onChange={onChange} className={selectClass}>
+                {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+              </select>
+              <ChevronDown />
+            </div>
+          </div>
+          <button
+            type="submit"
+            disabled={isProcessing}
+            className={`h-[42px] rounded-lg text-sm font-medium text-white flex items-center justify-center gap-2 transition-colors ${
+              isProcessing ? 'bg-zinc-300 cursor-wait' : 'bg-zinc-900 hover:bg-zinc-700'
+            }`}
+          >
+            {isProcessing
+              ? <><span className="animate-spin h-3.5 w-3.5 border-2 border-white/50 border-t-white rounded-full"></span> Generating...</>
+              : 'Start interview'
+            }
           </button>
         </form>
       </div>
 
-      {/* HISTORY LIST */}
-      <div className="space-y-6 pb-20 sm:pb-0">
-        {/* CHANGED: text-slate-800 to text-white so it's readable on the dark background */}
-        <h2 className="text-xl sm:text-2xl font-black text-white flex items-center px-2">
-          <span className="w-8 h-8 sm:w-10 sm:h-10 bg-white/10 text-indigo-300 rounded-lg sm:rounded-xl flex items-center justify-center mr-3 text-sm sm:text-lg backdrop-blur-sm">📊</span> 
-          Interview History
-        </h2>
+      <div className="space-y-4">
+        <h2 className="text-sm font-semibold text-zinc-800 px-1">Past sessions</h2>
         {isLoading && sessions.length === 0 ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin h-12 w-12 border-t-2 border-b-2 border-indigo-500 rounded-full"></div>
+          <div className="flex justify-center py-16">
+            <div className="animate-spin h-8 w-8 border-2 border-zinc-200 border-t-zinc-600 rounded-full"></div>
+          </div>
+        ) : sessions.length === 0 ? (
+          <div className="border-2 border-dashed border-zinc-200 rounded-xl py-14 text-center">
+            <p className="text-sm text-zinc-400">No sessions yet. Start one above.</p>
           </div>
         ) : (
-          sessions.length === 0 ? (
-            <div className="bg-white/5 backdrop-blur-sm border-2 border-dashed border-white/20 rounded-2xl sm:rounded-[2rem] py-16 sm:py-20 text-center">
-              <p className="text-slate-300 font-bold text-base sm:text-lg">No sessions yet.</p>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {sessions.map((session) => (
-                <SessionCard key={session._id} session={session} onClick={viewSession} onDelete={handleDelete}/>
-              ))}
-            </div>
-          )
+          <div className="space-y-3">
+            {sessions.map((session) => (
+              <SessionCard key={session._id} session={session} onClick={viewSession} onDelete={handleDelete} />
+            ))}
+          </div>
         )}
       </div>
 
     </div>
   )
+}
+
+function ChevronDown() {
+  return (
+    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+      </svg>
+    </div>
+  );
 }
 
 export default Dashboard
